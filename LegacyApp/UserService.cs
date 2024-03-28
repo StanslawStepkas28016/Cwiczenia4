@@ -1,29 +1,22 @@
 ﻿using System;
 
+/*
+ *
+ * UI - html, console
+ * BL - logika biznesowa
+ * Infrastructure - I/O
+ */
+
 namespace LegacyApp
 {
+    /* Walidacja przy sprawdzaniu użytkownika jest zrobiona w bardzo chaotyczny sposób, rozdzielę ją na elementy. */
     public class UserService
     {
         public bool AddUser(string firstName, string lastName, string email, DateTime dateOfBirth, int clientId)
         {
-            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
-            {
-                return false;
-            }
+            if (!InputValidation(firstName, lastName, email)) return false;
 
-            if (!email.Contains("@") && !email.Contains("."))
-            {
-                return false;
-            }
-
-            var now = DateTime.Now;
-            int age = now.Year - dateOfBirth.Year;
-            if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day)) age--;
-
-            if (age < 21)
-            {
-                return false;
-            }
+            if (!AgeValidation(dateOfBirth)) return false;
 
             var clientRepository = new ClientRepository();
             var client = clientRepository.GetById(clientId);
@@ -66,6 +59,35 @@ namespace LegacyApp
             }
 
             UserDataAccess.AddUser(user);
+            return true;
+        }
+
+        private static bool InputValidation(string firstName, string lastName, string email)
+        {
+            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
+            {
+                return false;
+            }
+
+            if (!email.Contains("@") && !email.Contains("."))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool AgeValidation(DateTime dateOfBirth)
+        {
+            var now = DateTime.Now;
+            int age = now.Year - dateOfBirth.Year;
+            if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day)) age--;
+
+            if (age < 21)
+            {
+                return false;
+            }
+
             return true;
         }
     }

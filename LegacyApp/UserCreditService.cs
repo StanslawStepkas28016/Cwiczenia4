@@ -12,13 +12,13 @@ namespace LegacyApp
         private readonly Dictionary<string, int> _database =
             new Dictionary<string, int>()
             {
-                {"Kowalski", 200},
-                {"Malewski", 20000},
-                {"Smith", 10000},
-                {"Doe", 3000},
-                {"Kwiatkowski", 1000}
+                { "Kowalski", 200 },
+                { "Malewski", 20000 },
+                { "Smith", 10000 },
+                { "Doe", 3000 },
+                { "Kwiatkowski", 1000 }
             };
-        
+
         public void Dispose()
         {
             //Simulating disposing of resources
