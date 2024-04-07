@@ -1,7 +1,6 @@
 ﻿using System;
 
 /*
- *
  * UI - html, console
  * BL - logika biznesowa
  * Infrastructure - I/O
@@ -9,14 +8,15 @@
 
 namespace LegacyApp
 {
-    /* Walidacja przy sprawdzaniu użytkownika jest zrobiona w bardzo chaotyczny sposób, rozdzielę ją na elementy. */
+    /* Walidacja przy sprawdzaniu użytkownika jest zrobiona w bardzo chaotyczny sposób (pomieszana z logiką biznesową),
+     * rozdzielę ją na elementy. */
     public class UserService
     {
         public bool AddUser(string firstName, string lastName, string email, DateTime dateOfBirth, int clientId)
         {
-            if (!InputValidation(firstName, lastName, email)) return false;
+            if (!InputValidation(firstName, lastName, email)) return false; // Walidacja sprawdzająca, czy mail jest mailem.
 
-            if (!AgeValidation(dateOfBirth)) return false;
+            if (!AgeValidation(dateOfBirth)) return false; // Walidacja (pomieszana z logiką biznesową), czy klient ma więcej niż 21 lat.
 
             var clientRepository = new ClientRepository();
             var client = clientRepository.GetById(clientId);
@@ -30,6 +30,14 @@ namespace LegacyApp
                 LastName = lastName
             };
 
+            if (!ClientStatusValidation(client, user)) return false; // Walidacja (pomieszana z logiką biznesową), sprawdzanie po statusie.
+
+            UserDataAccess.AddUser(user);
+            return true;
+        }
+
+        private static bool ClientStatusValidation(Client client, User user)
+        {
             if (client.Type == "VeryImportantClient")
             {
                 user.HasCreditLimit = false;
@@ -58,7 +66,6 @@ namespace LegacyApp
                 return false;
             }
 
-            UserDataAccess.AddUser(user);
             return true;
         }
 
